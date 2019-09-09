@@ -5,11 +5,13 @@ def signin_method
    if user_input == "Log in"
    log_in 
 else 
-   sign_up 
-end 
+   register 
+   selection = main_menu 
 end 
 
-def sign_up 
+end 
+
+def register 
    first_name = $prompt.ask("First Name:", required: true)
    last_name = $prompt.ask("Last Name:", required: true)
    email = $prompt.ask("Email:", required: true)
@@ -23,6 +25,7 @@ def log_in
    
    if User.user_emails.include?(email) && User.user_passwords.include?(password)
       puts "Lets see whats happening today!"
+      selection = main_menu 
    else 
       i= 0
       j = 3
