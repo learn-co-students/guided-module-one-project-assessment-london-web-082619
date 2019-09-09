@@ -6,6 +6,8 @@
 require 'rest-client'
 require 'json'
 require 'pry'
+
+
 # require 'net/http'
 
 # data = RestClient.get("https://www.eventbriteapi.com/v3/users/me", headers = {Authorization: Bearer "CXS22JWMRNKAGSTG6RXF"} )
