@@ -6,6 +6,9 @@ require_all "./db"
 require_all "./app"
 require_all "./lib"
 
+#Set default user
+# current_user = User.first
+
 # Display main menu with two options: 'Search events' and 'View my tickets'
 # Save the menu selection as a string
 selection = main_menu 
