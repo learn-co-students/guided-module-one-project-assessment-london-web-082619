@@ -4,6 +4,8 @@
 u1 = User.create({first_name: "Elizabeth", last_name: "Prendergast", email: "elizabeth.prendergast@gmail.com", password: "123456"})
 u2 = User.create({first_name: "Michelle", last_name: "Van", email: "mjtvan@gmail.com", password: "123456"})
 
+puts "#{User.all.length} users created"
+
 l1 = Location.create(city: "London")
 l2 = Location.create(city: "Liverpool")
 
