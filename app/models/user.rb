@@ -13,14 +13,13 @@ class User < ActiveRecord::Base
   def self.user_passwords 
     self.all.map{|user| user.password}
   end 
-    def view_tickets
-        #Create array of strings which has ticket info
-        # self.tickets
-        # prompt = TTY::Prompt.new
-        # prompt.select("", )
-    
+
+    def ticket_summary
+        i = 1
+        self.tickets.map{ |ticket| "#{ticket.event.name} - #{ticket.event.location.city}" }
     end
 
+    
 
 end 
 

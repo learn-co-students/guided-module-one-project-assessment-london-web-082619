@@ -17,3 +17,4 @@ e2 = Event.create(name: "Closing Party", description: "The worst party ever", lo
 
 t1 = Ticket.create(price: 25.00, user_id: u1.id, event_id: e1.id)
 t2 = Ticket.create(price: 15.00, user_id: u2.id, event_id: e2.id)
+t3 = Ticket.create(price: 50.00, user_id: u1.id, event_id: e2.id)
