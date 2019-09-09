@@ -10,8 +10,19 @@ require 'pry'
 
 # data = RestClient.get("https://www.eventbriteapi.com/v3/users/me", headers = {Authorization: Bearer "CXS22JWMRNKAGSTG6RXF"} )
 
-response_string = RestClient.get("https://www.eventbriteapi.com/v3/users/me/?token=CXS22JWMRNKAGSTG6RXF")
-data = JSON.parse(response_string)
+event_search = "https://www.eventbriteapi.com/v3/events/search"
+token = "/?token=CXS22JWMRNKAGSTG6RXF"
+user = "https://www.eventbriteapi.com/v3/users/me"
+event = "https://www.eventbriteapi.com/v3/events/search?location.address=vancovuer&location.within=10km&expand=venue"
+
+def get_api_response(url)
+    response_string = RestClient.get(url)
+    data = JSON.parse(response_string)
+end
+
+data = get_api_response(user+token)
+data2 = get_api_response(event_search+token)
+# events = data2["events"]
 
 binding.pry
 'save'
