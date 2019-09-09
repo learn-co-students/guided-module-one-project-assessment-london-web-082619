@@ -24,8 +24,8 @@ data = get_api_response(user+token)
 data2 = get_api_response(event_search+token)
 # events = data2["events"]
 
-binding.pry
-'save'
+# binding.pry
+# 'save'
 # def get_api_response(url)
 #     response_string = RestClient.get(url)
 #     JSON.parse(response_string)
