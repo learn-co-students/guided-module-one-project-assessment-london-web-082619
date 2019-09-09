@@ -1,7 +1,6 @@
 $prompt = TTY::Prompt.new
 
 def main_menu
-    prompt = TTY::Prompt.new
     $prompt.select("Please select an option from the menu below", ["Search events", "View my tickets", "Log out"])
 end
 
@@ -10,14 +9,14 @@ def search_menu
 end
 
 def display_tickets(ticket_summary)
-    prompt = TTY::Prompt.new
-    selection = prompt.select("You currently have #{User.first.tickets.length} event ticket(s). Please click on a ticket to see more about that event.", ticket_summary)
+    selection = $prompt.select("You currently have #{User.first.tickets.length} event ticket(s). Please click on a ticket to see more about that event.", ticket_summary)
     #Example selection (string): Opening Party - London
     event_name = selection.split(" - ")[0]
     event_city = selection.split(" - ")[1]
     location_id = Location.find_by(city: event_city).id
     event = Event.find_by(name: event_name, location_id: location_id )
     event.event_summary
+    selection = $prompt.select("", ["Return to My Tickets", "Main Menu"])
 end
 
 def main_menu_navigation(selection)

@@ -13,9 +13,9 @@ signin_method
 
 # Display main menu with two options: 'Search events' and 'View my tickets'
 # Save the menu selection as a string
-selection = main_menu 
+# selection = main_menu 
 # Navigate to main menu selection
-main_menu_navigation(selection)
+# main_menu_navigation(selection)
 
 
 binding.pry 

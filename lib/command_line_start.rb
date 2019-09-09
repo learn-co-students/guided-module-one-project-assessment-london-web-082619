@@ -7,6 +7,7 @@ def signin_method
 else 
    register 
    selection = main_menu 
+   main_menu_navigation(selection)
 end 
 
 end 
@@ -26,6 +27,7 @@ def log_in
    if User.user_emails.include?(email) && User.user_passwords.include?(password)
       puts "Lets see whats happening today!"
       selection = main_menu 
+      main_menu_navigation(selection)
    else 
       i= 0
       j = 3
