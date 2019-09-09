@@ -6,4 +6,3 @@ require_relative "../lib/command_line_interface.rb"
 puts "Welcome to EventBrite"
 
 
-hello
