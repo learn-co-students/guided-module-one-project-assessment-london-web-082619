@@ -3,6 +3,7 @@
 # Private token: CXS22JWMRNKAGSTG6RXF
 # Public token: 6LBP7OZ37SMBHZCM75LS
 # require_relative "../lib/command_line_start.rb"
+
 require 'rest-client'
 require 'json'
 require 'pry'
@@ -15,7 +16,8 @@ $token = "token=CXS22JWMRNKAGSTG6RXF"
 $event_search_url = "https://www.eventbriteapi.com/v3/events/search"
 $categories_url = "https://www.eventbriteapi.com/v3/categories"
 $category_search_url = "https://www.eventbriteapi.com/v3/events/search/?categories="#+add category ID
-london_events = "https://www.eventbriteapi.com/v3/events/search?location.address=london"
+$city_search_url = "https://www.eventbriteapi.com/v3/events/search?location.address="#add city name
+
 
 #given a url AND TOKEN, returns data from the API - WORKING
 def get_api_response(url)
@@ -28,7 +30,14 @@ def get_categories
     all_category_info = get_api_response($categories_url + "/?")["categories"]
     categories = []
     all_category_info.each{ |category| categories << category["name"] }
-    categories
+    categories.sort
+end
+
+#returns category name given a category ID
+def category_name(category_id)
+    all_category_info = get_api_response($categories_url + "/?")["categories"]
+    category = all_category_info.find{ |category| category["id"] == category_id }
+    return category["name"]
 end
 
 #given category name, return category ID number - WORKING
@@ -41,13 +50,80 @@ end
 #given a category name, get all events with that category ID - WORKING
 def find_events_by_category(category_name)
     category_id = get_category_id(category_name)
-    get_api_response($category_search_url + category_id + "&") #returns array of hashes where eash hash contains info for a specific events
+    response = get_api_response($category_search_url + category_id + "&expand=venue" + "&")["events"] #returns array of hashes where eash hash contains info for a specific events
 end
 
-#given a city, return all events in that city
+# https://www.eventbriteapi.com/v3/events/search?location.address=vancovuer&location.within=10km&expand=venue
+
+#given a city name (as a string), return all events in that city - WORKING
 def find_events_by_city(city)
-
+    get_api_response($city_search_url + city + "&expand=venue" + "&")["events"]
 end
+
+#given an event id, get the event city
+def get_event_city(event_id)
+    url = "https://www.eventbriteapi.com/v3/events/" + event_id + "/?expand=venue"
+    return get_api_response(url + "&")
+end
+
+#parses the fate format used in EventBrite API to format used in Active Record
+def parse_datetime(datetime_hash)
+    datetime = datetime_hash["local"].split("-")
+    year = datetime[0]
+    month = datetime[1]
+    day = datetime[2].split("T")[0]
+    hour = datetime[2].split("T")[1].split(":")[0]
+    minute = datetime[2].split("T")[1].split(":")[1]
+    # return "#{year}, #{month}, #{day}, #{hour}, #{minute}"
+    Time.new(year, month, day, hour, minute)
+end
+
+#given a datetime formatted for ActiveRecord, returns the month name for a given month
+def return_month_as_string(datetime)
+    case datetime.month
+    when 1
+        "January"
+    when 2
+        "February"
+    when 3
+        "March"
+    when 4
+        "April"
+    when 5
+        "May"
+    when 6
+        "June"
+    when 7
+        "July"
+    when 8
+        "August"
+    when 9
+        "September"
+    when 10
+        "October"
+    when 11
+        "November"
+    when 12
+        "December"
+    else
+        "This isn't a valid month!"
+    end
+end
+
+#given a date, returns a readable string
+def display_date(datetime)
+    "#{return_month_as_string(datetime)} #{datetime.day} #{datetime.year} - #{datetime.hour}:00"
+end
+
+#returns an array of event search results (to be passed into TTY Prompt function)
+def display_search_results(results)
+    events = []
+    results.first(20).each do |event|
+        date_formatted = display_date(parse_datetime(event["start"]))
+        puts "#{date_formatted}  |  #{event["name"]["text"]}  |  #{event["venue"]["address"]["city"]}  |  #{event["category_id"]}"
+    end
+end
+     
 
 
 binding.pry
