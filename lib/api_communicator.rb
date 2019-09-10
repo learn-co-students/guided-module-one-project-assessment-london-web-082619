@@ -33,11 +33,13 @@ def get_categories
     categories.sort
 end
 
-#returns category name given a category ID
+#returns category name given a category ID - WORKING
 def category_name(category_id)
-    all_category_info = get_api_response($categories_url + "/?")["categories"]
-    category = all_category_info.find{ |category| category["id"] == category_id }
-    return category["name"]
+    if category_instance = get_api_response($categories_url + "/?")["categories"].find{ |c| c["id"] == category_id }
+        return category_instance["name"]
+    else
+        return "Uncategorised"
+    end
 end
 
 #given category name, return category ID number - WORKING
@@ -53,20 +55,19 @@ def find_events_by_category(category_name)
     response = get_api_response($category_search_url + category_id + "&expand=venue" + "&")["events"] #returns array of hashes where eash hash contains info for a specific events
 end
 
-# https://www.eventbriteapi.com/v3/events/search?location.address=vancovuer&location.within=10km&expand=venue
-
 #given a city name (as a string), return all events in that city - WORKING
 def find_events_by_city(city)
-    get_api_response($city_search_url + city + "&expand=venue" + "&")["events"]
+    events = get_api_response($city_search_url + city + "&expand=venue" + "&")
+    return events["events"]
 end
 
-#given an event id, get the event city
+#given an event id, get the event city - WORKING
 def get_event_city(event_id)
     url = "https://www.eventbriteapi.com/v3/events/" + event_id + "/?expand=venue"
     return get_api_response(url + "&")
 end
 
-#parses the fate format used in EventBrite API to format used in Active Record
+#parses the fate format used in EventBrite API to format used in Active Record - WORKING
 def parse_datetime(datetime_hash)
     datetime = datetime_hash["local"].split("-")
     year = datetime[0]
@@ -78,7 +79,7 @@ def parse_datetime(datetime_hash)
     Time.new(year, month, day, hour, minute)
 end
 
-#given a datetime formatted for ActiveRecord, returns the month name for a given month
+#given a datetime formatted for ActiveRecord, returns the month name for a given month - WORKING
 def return_month_as_string(datetime)
     case datetime.month
     when 1
@@ -110,7 +111,7 @@ def return_month_as_string(datetime)
     end
 end
 
-#given a date, returns a readable string
+#given a date, returns a readable string - WORKING
 def display_date(datetime)
     "#{return_month_as_string(datetime)} #{datetime.day} #{datetime.year} - #{datetime.hour}:00"
 end
@@ -120,8 +121,10 @@ def display_search_results(results)
     events = []
     results.first(20).each do |event|
         date_formatted = display_date(parse_datetime(event["start"]))
-        puts "#{date_formatted}  |  #{event["name"]["text"]}  |  #{event["venue"]["address"]["city"]}  |  #{event["category_id"]}"
+        category_id = event["category_id"]
+        events << "#{date_formatted}  |  #{event["name"]["text"]}  |  #{event["venue"]["address"]["city"]}  |  #{category_name(category_id)}"
     end
+    events
 end
      
 
