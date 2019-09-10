@@ -13,4 +13,7 @@ class Event < ActiveRecord::Base
         puts "Description: #{self.description}"
     end
 
+    def self.names
+        self.all.map{|eve| eve.name}
+    end 
 end 
