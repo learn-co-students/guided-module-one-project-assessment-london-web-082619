@@ -1,7 +1,19 @@
+require_relative "../lib/command_line_start.rb"
 $prompt = TTY::Prompt.new
 
 def main_menu
-    $prompt.select("Please select an option from the menu below", ["Search events", "View my tickets", "Log out"])
+    prompt = TTY::Prompt.new
+    selection = $prompt.select("Please select an option from the menu below", ["Search events", "View my tickets", "Log out"])
+    if selection == "Search events"
+        search
+    elsif selection == "View my tickets"
+        ticket_summary = User.first.ticket_summary
+        display_tickets(ticket_summary)
+    elsif selection == "Log out"
+        puts "Returns to sign in page"
+    else
+        return "ERROR"
+    end
 end
 
 def search_menu
