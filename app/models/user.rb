@@ -14,10 +14,9 @@ class User < ActiveRecord::Base
     self.all.map{|user| user.password}
   end 
 
-    def ticket_summary
-        i = 1
-        self.tickets.map{ |ticket| "#{ticket.event.name} - #{ticket.event.location.city}" }
-    end
+  def ticket_summary
+    self.tickets.map{ |ticket| "#{ticket.event.name} - #{ticket.event.location.city}" }
+  end
 
     
 

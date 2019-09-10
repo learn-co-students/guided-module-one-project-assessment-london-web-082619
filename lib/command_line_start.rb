@@ -7,6 +7,7 @@ def signin_method
 else 
    register 
    selection = main_menu 
+   main_menu_navigation(selection)
 end 
 
 end 
@@ -31,6 +32,7 @@ def log_in
    if User.user_emails.include?(array[0]) && User.user_passwords.include?(array[1])
       puts "Lets see whats happening today!"
       selection = main_menu 
+      main_menu_navigation(selection)
    else 
        i= 0
       until i == 3  
