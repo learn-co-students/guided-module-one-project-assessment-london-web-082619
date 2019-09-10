@@ -1,5 +1,5 @@
 
-# require_relative '../config/environment.rb'
+require_relative '../lib/api_communicator.rb'
 
 u1 = User.create({first_name: "Elizabeth", last_name: "Prendergast", email: "elizabeth.prendergast@gmail.com", password: "123456"})
 u2 = User.create({first_name: "Michelle", last_name: "Van", email: "mjtvan@gmail.com", password: "123456"})
@@ -17,13 +17,6 @@ c3 = Category.create(name: "Sports")
 
 rand_time = Time.new(rand(2019..2021), rand(1..12), rand(1..28), rand(14..22), 00)
 
-t.string "name"
-t.string "description"
-t.datetime "start_time"
-t.datetime "end_time"
-t.integer "location_id"
-t.integer "category_id"
-
 e1 = Event.create(name: "Opening Party", description: "Lorem ipsum dolor sit amet, consectetur.", start_time: rand_time, location_id: l1.id, category_id: c1.id)
 e2 = Event.create(name: "Closing Party", description: "Lorem ipsum dolor sit amet, consectetur.", start_time: rand_time, location_id: l2.id, category_id: c1.id)
 e3 = Event.create(name: "Les Miserables", description: "Suspendisse tincidunt dui sit amet imperdiet rhoncus.", start_time: rand_time, location_id: l3.id, category_id: c2.id)
@@ -31,7 +24,7 @@ e4 = Event.create(name: "FIFA World Cup Party", description: "Suspendisse tincid
 e5 = Event.create(name: "Blue Planet Live", description: "Vivamus euismod mauris vel nisl aliquet vehicula. ", start_time: rand_time, location_id: l2.id, category_id: c1.id)
 e6 = Event.create(name: "Wicked", description: "Vivamus euismod mauris vel nisl aliquet vehicula. ", start_time: rand_time, location_id: l3.id, category_id: c2.id)
 
-
 t1 = Ticket.create(price: 25.00, user_id: u1.id, event_id: e1.id)
 t2 = Ticket.create(price: 15.00, user_id: u2.id, event_id: e2.id)
 t3 = Ticket.create(price: 50.00, user_id: u1.id, event_id: e2.id)
+
