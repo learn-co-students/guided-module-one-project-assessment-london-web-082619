@@ -1,16 +1,10 @@
-require_relative '../config/environment'
-require_relative "../lib/api_communicator.rb"
-require_relative "../lib/command_line_interface.rb"
-require_relative "../lib/command_line_interface.rb"
-require_all "./app"
-# require_relative "../lib/seed.rb"
 
-
-puts "Welcome to EventBrite"
-
+# require_relative '../config/environment.rb'
 
 u1 = User.create({first_name: "Elizabeth", last_name: "Prendergast", email: "elizabeth.prendergast@gmail.com", password: "123456"})
 u2 = User.create({first_name: "Michelle", last_name: "Van", email: "mjtvan@gmail.com", password: "123456"})
+
+puts "#{User.all.length} users created"
 
 l1 = Location.create(city: "London")
 l2 = Location.create(city: "Liverpool")
@@ -23,6 +17,4 @@ e2 = Event.create(name: "Closing Party", description: "The worst party ever", lo
 
 t1 = Ticket.create(price: 25.00, user_id: u1.id, event_id: e1.id)
 t2 = Ticket.create(price: 15.00, user_id: u2.id, event_id: e2.id)
-
-binding.pry 
-'save'
+t3 = Ticket.create(price: 50.00, user_id: u1.id, event_id: e2.id)
