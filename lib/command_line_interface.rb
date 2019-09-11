@@ -55,7 +55,7 @@ def log_in #works
 end 
 
 def search
-   searchmenu = $prompt.select("How would you like to refine your search?", ["Name", "Location", "Category"])
+   searchmenu = $prompt.select("How would you like to refine your search?", ["Location", "Category"])
    case searchmenu 
    when "Location"
     cities = ["London", "Manchester", "Liverpool", "Edinburgh", "Oxford", "Brighton", "Birmingham", "Glasgow", "Cambridge", "Belfast", "Dublin", "Leeds", "Bath"].sort
@@ -139,10 +139,9 @@ def my_bookings_navigation #works
     selection = $prompt.select("You currently have #{$current_user.bookings.length} event booking(s). Please click on a ticket to see more about that event.", $current_user.booking_summary)
     # Given a selection from my_tickets_menu, return a summary of that event
     #Example selection (string): Opening Party - London
-    event_name = selection.split(" - ")[0]
-    event_city = selection.split(" - ")[1]
-    event = Event.find_by(name: event_name, location: event_city)
-    event.event_summary
+    booking_id = selection.split(" - ")[0].to_i
+    booking = $current_user.bookings.find{ |booking| booking.id == booking_id }
+    booking.event.event_summary
     event_summary_navigation
 end
 
@@ -153,24 +152,19 @@ end
 def event_summary_navigation
 
     selection1 = event_summary_menu
-   
-
-   #  if selection == "View My Bookings"
-   #    binding.pry
-   #      booking_summary = $current_user.booking_summary #booking_summary gives an array
-   #    #   my_bookings_menu(booking_summary)
 
    if selection1 == "Modify My Bookings"
         selection2 = $prompt.select("Which booking would you like to change?", $current_user.booking_summary) #works
+        
         action = $prompt.select("Actions: ", ["Change Quantity", "Refund Booking"]) #works
 
         case action 
 
         when "Change Quantity"
-            event_name = selection2.split(" - ")[0]
+            booking_id = selection2.split(" - ")[0].to_i
             new_num = $prompt.ask("Updated Total Number of Tickets You Wish to Book for This Event: ") #works
-            selected_event_id = Event.find_by(name: event_name).id
-            Booking.update(user_id: $current_user.id, event_id: selected_event_id, number: new_num.to_i)
+            booking = $current_user.bookings.find{ |booking| booking.id == booking_id }
+            booking.update(number: new_num.to_i)
 
             puts "\nUpdated!\n"
 
@@ -178,12 +172,10 @@ def event_summary_navigation
 
         when "Refund Booking"
             binding.pry
-            event_name = selection2.split(" - ")[0]
-            selected_event_id = Event.find_by(name: event_name).id
-            booking = Booking.find_by(user_id: $current_user.id, event_id: selected_event_id)
-            booking.destroy
+            booking_id = selection2.split(" - ")[0].to_i
+            Booking.find_by(id: booking_id).destroy
 
-            puts "\nYou have deleted your booking for #{event_name}.\n" #works
+            puts "\nYou have deleted your booking.\n" #works
 
             main_menu
         end 
