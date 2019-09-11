@@ -1,6 +1,4 @@
 class Event < ActiveRecord::Base 
-    belongs_to :location
-    belongs_to :category
     has_many :bookings
     has_many :users, through: :bookings
 

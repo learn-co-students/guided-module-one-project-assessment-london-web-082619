@@ -5,8 +5,8 @@ class CreateEvents < ActiveRecord::Migration[5.2]
       t.string :description
       t.datetime :start_time 
       t.datetime :end_time 
-      t.integer :location_id
-      t.integer :category_id
+      t.string :location
+      t.string :category
     end 
   end
 end
