@@ -7,13 +7,13 @@ class Event < ActiveRecord::Base
         puts ""
         puts "Event Name: #{self.name}"
         puts "Date: #{self.start_time}" #NEED TO FORMAT THIS
-        puts "Location: #{self.location.city}"
-        puts "Category: #{self.category.name}"
+        puts "Location: #{self.location}"
+        puts "Category: #{self.category}"
         puts "Description: #{self.description}"
         puts ""
     end
 
     def self.names
-        self.all.map{|eve| eve.name}
+        self.all.map{|event| event.name}
     end 
 end 
