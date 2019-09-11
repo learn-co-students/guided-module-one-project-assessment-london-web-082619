@@ -17,12 +17,18 @@ $event_search_url = "https://www.eventbriteapi.com/v3/events/search"
 $categories_url = "https://www.eventbriteapi.com/v3/categories"
 $category_search_url = "https://www.eventbriteapi.com/v3/events/search/?categories="#+add category ID
 $city_search_url = "https://www.eventbriteapi.com/v3/events/search?location.address="#add city name
+event_di_search = "https://www.eventbriteapi.com/v3/events/{event_id}/?expand=venue"
 
 
 #given a url AND TOKEN, returns data from the API - WORKING
 def get_api_response(url)
     response_string = RestClient.get(url + $token)
     data = JSON.parse(response_string)
+end
+
+#returns an array of all event data
+def get_all_event_info
+    get_api_response($event_search_url + "/?expand=venue" "&")["events"]
 end
 
 #return an array of categories - WORKING
@@ -55,21 +61,16 @@ def find_events_by_category(category_name)
     response = get_api_response($category_search_url + category_id + "&expand=venue" + "&")["events"] #returns array of hashes where eash hash contains info for a specific events
 end
 
-#given a city name (as a string), return all events in that city - WORKING
-def find_events_by_city(city)
-    events = get_api_response($city_search_url + city + "&expand=venue" + "&")
-    return events["events"]
-end
-
 #given an event id, get the event city - WORKING
 def get_event_city(event_id)
     url = "https://www.eventbriteapi.com/v3/events/" + event_id + "/?expand=venue"
     return get_api_response(url + "&")
 end
 
-#returns an array of all event data
-def get_all_event_info
-    get_api_response($event_search_url + "/?expand=venue" "&")["events"]
+#given a city name (as a string), return all events in that city - WORKING
+def find_events_by_city(city)
+    events = get_api_response($city_search_url + city + "&expand=venue" + "&")
+    return events["events"]
 end
 
 #parses the fate format used in EventBrite API to format used in Active Record - WORKING
@@ -132,12 +133,17 @@ def display_search_results(results)
     events
 end
   
-#FIX THIS
-# Example selection: "53667810867  |  September 13 2019 - 22:00  |  Suite Life Fridays Hosted by Big Tigger and Friends Friday at Suite Lounge  |  Atlanta  |  Music"
+s1 = "53667810867  |  September 13 2019 - 22:00  |  Suite Life Fridays Hosted by Big Tigger and Friends Friday at Suite Lounge  |  Atlanta  |  Music"
+s2 = "70388551051  |  October 6 2019 - 12:00  |  Hop City's Lucky 7th Anniversary  |  Birmingham  |  Uncategorised"
+s3 = "62514061240  |  October 23 2019 - 7:00  |  Alabama Literacy Association 51st Annual Conference  |  Birmingham  |  Family & Education"
+test_events = find_events_by_city("Birmingham")
+display = display_search_results(test_events)
+
 #given the selection from the search results, finds the event info and displays it in a summary - WORKING
 def event_summary(selection)
+    binding.pry
     event_id = selection.split("  |  ")[0]
-    event_data = get_all_event_info.find{ |event| event["id"] == event_id }
+    event_data = get_api_response("https://www.eventbriteapi.com/v3/events/" + event_id + "/?expand=venue" + "&")
     #print out event data
     puts "Event Name: #{event_data["name"]["text"]}"
     puts "Date & Time: #{display_date(parse_datetime(event_data["start"]))}"
@@ -146,6 +152,8 @@ def event_summary(selection)
     puts "Description: #{event_data["description"]["text"]}"
     event_data
 end
+
+event_data = event_summary(s3)
 
 #given a hash of event data from EventBrite, create an instance of event in ActiveRecord
 def create_event_object(event_data)
@@ -161,5 +169,5 @@ end
 
 #SEARCH BY NAME
 
-# binding.pry
-# 'save'
+binding.pry
+'save'
