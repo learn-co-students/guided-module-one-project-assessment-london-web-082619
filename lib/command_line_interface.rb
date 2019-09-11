@@ -26,7 +26,6 @@ def log_in_prompt #works
    [email, password]
 end 
 
-
 def log_in #works
   array = log_in_prompt
   user1 = User.find_by(email: array[0])
