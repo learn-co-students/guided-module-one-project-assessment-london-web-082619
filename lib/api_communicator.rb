@@ -141,7 +141,6 @@ display = display_search_results(test_events)
 
 #given the selection from the search results, finds the event info and displays it in a summary - WORKING
 def event_summary(selection)
-    binding.pry
     event_id = selection.split("  |  ")[0]
     event_data = get_api_response("https://www.eventbriteapi.com/v3/events/" + event_id + "/?expand=venue" + "&")
     #print out event data
@@ -153,9 +152,7 @@ def event_summary(selection)
     event_data
 end
 
-event_data = event_summary(s3)
-
-#given a hash of event data from EventBrite, create an instance of event in ActiveRecord
+#given a hash of event data from EventBrite, create an instance of event in ActiveRecord - WORKING
 def create_event_object(event_data)
     name = event_data["name"]["text"]
     description = event_data["description"]["text"]
@@ -169,5 +166,5 @@ end
 
 #SEARCH BY NAME
 
-binding.pry
-'save'
+# binding.pry
+# 'save'
