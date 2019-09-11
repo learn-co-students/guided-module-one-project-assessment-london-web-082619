@@ -15,7 +15,7 @@ class User < ActiveRecord::Base
   end 
 
   def booking_summary
-    self.bookings.map{ |booking| "#{booking.event.name} - #{booking.event.location}" }
+    self.bookings.map{ |booking| "#{booking.id} - #{booking.event.name} - #{booking.event.location} - No. of tickets: #{booking.number}" }
   end
 
     

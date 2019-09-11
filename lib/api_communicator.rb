@@ -158,12 +158,6 @@ def display_search_results(results)
     end
     events
 end
-  
-s1 = "53667810867  |  September 13 2019 - 22:00  |  Suite Life Fridays Hosted by Big Tigger and Friends Friday at Suite Lounge  |  Atlanta  |  Music"
-s2 = "70388551051  |  October 6 2019 - 12:00  |  Hop City's Lucky 7th Anniversary  |  Birmingham  |  Uncategorised"
-s3 = "62514061240  |  October 23 2019 - 7:00  |  Alabama Literacy Association 51st Annual Conference  |  Birmingham  |  Family & Education"
-test_events = find_events_by_city("Birmingham")
-display = display_search_results(test_events)
 
 #given the selection from the search results, finds the event info and displays it in a summary - WORKING
 def event_summary(selection)
