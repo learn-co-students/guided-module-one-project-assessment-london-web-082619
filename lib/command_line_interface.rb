@@ -21,7 +21,8 @@ def register
 end 
 
 def log_in_prompt #works
-   email = $prompt.ask("Email:", required: true)
+   email = $prompt.ask("Email:", required: true) {|q|
+        q.validate(/\A\w+@\w+\.\w+\Z/, 'Invalid email address')}
    password = $prompt.mask("Password:", required: true)
    [email, password]
 end 
@@ -31,7 +32,9 @@ def log_in #works
   user1 = User.find_by(email: array[0])
   if user1.email == array[0] && user1.password == array[1]
       $current_user = user1
-      puts "Lets see whats happening today!"
+
+      puts "\nHere we go!\n"
+
       selection = main_menu 
    else #works
        i= 0
@@ -39,7 +42,9 @@ def log_in #works
          puts "Invalid email and password. Please try again."
          array = log_in_prompt
          if user1.email == array[0] && user1.password == array[1]
-             puts "Lets see whats happening today!"
+
+             puts "\nHere we go!\n"
+
              selection = main_menu
          end
          i += 1
@@ -48,16 +53,21 @@ def log_in #works
 end 
 
 def mainmenu
-   input = $prompt.select("What's next?", ["View Bookings", "Search For More Events", "End Session"])
+
+   input = $prompt.select("What's next?", ["View Bookings", "Search For More Events", "Log Out", "End Session"])
+
    case input 
    when "View Bookings"
        $booking_summary = $current_user.booking_summary
         my_bookings_navigation($booking_summary)
         event_summary_navigation
    when "Search For More Events"
-      search
+
+        search
+   when "Log Out"
+        signin_method
    when "End Session"
-      exit
+        exit
    end 
 end 
 
@@ -100,7 +110,7 @@ def search
         new_event = create_event_object(event_data)
         #create a booking using the newly created event object and num of tickets input
         new_ticket = Booking.new(user_id: $current_user.id, event_id: new_event.id, number: num.to_i) 
-        puts "Congratulations! You have secured a booking of #{num} tickets!"
+        puts "\nCongratulations! You have secured a booking of #{num} tickets!\n"
         mainmenu
     else  
         mainmenu 
@@ -119,7 +129,8 @@ def search
         new_event = create_event_object(event_data)
         #create a booking using the newly created event object and num of tickets input
         new_ticket = Booking.new(user_id: $current_user.id, event_id: new_event.id, number: num.to_i) 
-        puts "Congratulations! You have secured a booking of #{num} tickets!"
+
+        puts "\nCongratulations! You have secured a booking of #{num} tickets!\n"
         mainmenu
     else  
         mainmenu 
@@ -127,33 +138,38 @@ def search
    end
 end
 
+def no_bookings 
+    puts "\nYou have no bookings\n\n"
+    selection = $prompt.select("What would you like to next?", ["Search For More Events", "Log Out", "End Session"])
+    case selection 
+    when "Search For More Events"
+        search 
+    when "Log Out" 
+        signin_method 
+    when "End Session"
+        exit 
+    end
+end 
+
 def main_menu
-    selection = $prompt.select("Please select an option from the menu below", ["Search Events", "View My Bookings", "Log Out"])
-    if selection == "Search Events" #works
+    selection = $prompt.select("Please select an option from the menu below", ["Search Events", "View My Bookings", "Log Out", "End Session"])
+    case selection 
+    when "Search Events" #works
         search
-    elsif selection == "View My Bookings" #work
+    when "View My Bookings" #work
         $booking_summary = $current_user.booking_summary #in array
-        my_bookings_navigation($booking_summary)
-    elsif selection == "Log Out" #works
+        if $book_summary.nil?
+            no_bookings
+        else 
+            my_bookings_navigation($booking_summary)
+        end 
+    when "Log Out" #works
+        signin_method
+    when "End Session"
         exit
-    else
-        return "ERROR"
     end
 end
 
-# def main_menu_navigation(selection) #first search/view 
-#     if selection == "Search events"
-#         search_menu
-#     elsif selection == "View my bookings" #works
-#        binding.pry
-#         $booking_summary = $current_user.booking_summary
-#         my_bookings_menu($booking_summary)
-#     elsif selection == "Log out"
-#         exit
-#     else
-#         return "ERROR"
-#     end
-# end
 
 def my_bookings_navigation(booking_summary) #works
     selection = $prompt.select("You currently have #{$current_user.bookings.length} event ticket(s). Please click on a ticket to see more about that event.", booking_summary)
@@ -191,12 +207,16 @@ def event_summary_navigation
             new_num = $prompt.ask("Updated Total Number of Tickets You Wish to Book for This Event: ") #works
             selected_event = Event.find_by(name: event_name)
             Booking.update(user_id: $current_user.id, event_id: selected_event.id, number: new_num)
-            puts "Updated"
+
+            puts "\nUpdated!\n"
+
             main_menu
 
         when "Refund Bookings"
             Booking.where("user_id = ?", $current_user.id).destroy_all #check
-            puts "You have no bookings." #works
+
+            puts "\nYou have no bookings.\n" #works
+
             main_menu
         end 
 
