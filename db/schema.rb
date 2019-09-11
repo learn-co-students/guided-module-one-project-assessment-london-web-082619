@@ -18,21 +18,13 @@ ActiveRecord::Schema.define(version: 2019_09_09_095206) do
     t.integer "number"
   end
 
-  create_table "categories", force: :cascade do |t|
-    t.string "name"
-  end
-
   create_table "events", force: :cascade do |t|
     t.string "name"
     t.string "description"
     t.datetime "start_time"
     t.datetime "end_time"
-    t.integer "location_id"
-    t.integer "category_id"
-  end
-
-  create_table "locations", force: :cascade do |t|
-    t.string "city"
+    t.string "location"
+    t.string "category"
   end
 
   create_table "users", force: :cascade do |t|
