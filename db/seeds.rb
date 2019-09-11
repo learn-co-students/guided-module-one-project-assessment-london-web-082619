@@ -1,5 +1,5 @@
 
-# require_relative '../config/environment.rb'
+require_relative '../lib/api_communicator.rb'
 
 u1 = User.create({first_name: "Elizabeth", last_name: "Prendergast", email: "elizabeth.prendergast@gmail.com", password: "123456"})
 u2 = User.create({first_name: "Michelle", last_name: "Van", email: "mjtvan@gmail.com", password: "12345"})
@@ -24,8 +24,8 @@ e4 = Event.create(name: "FIFA World Cup Party", description: "Suspendisse tincid
 e5 = Event.create(name: "Blue Planet Live", description: "Vivamus euismod mauris vel nisl aliquet vehicula. ", start_time: rand_time, location_id: l2.id, category_id: c1.id)
 e6 = Event.create(name: "Wicked", description: "Vivamus euismod mauris vel nisl aliquet vehicula. ", start_time: rand_time, location_id: l3.id, category_id: c2.id)
 
-
 t1 = Booking.create(user_id: u1.id, event_id: e1.id, number: 3)
 t2 = Booking.create(user_id: u2.id, event_id: e2.id, number: 2)
 t3 = Booking.create(user_id: u1.id, event_id: e2.id, number: 1)
+
 

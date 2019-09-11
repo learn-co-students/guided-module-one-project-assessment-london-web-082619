@@ -180,4 +180,3 @@ def event_summary_navigation
     end
 
 end
-
