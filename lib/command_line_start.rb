@@ -66,39 +66,65 @@ def search
    searchmenu = $prompt.select("How would you like to refine your search?", ["Name", "Location", "Category"])
    case searchmenu 
 
-   when "Name" #works
-      name_input = $prompt.ask("Enter keywords to filter your search", required: true)
-      search_result = Event.names.select{|e| e.include?(name_input)}
-      results = $prompt.select("Results", search_result)
-      Event.find_by(name: results).event_summary
-      input = $prompt.select("Options", ["Make Booking", "Main Menu"])
+#    when "Name" #works
+#       name_input = $prompt.ask("Enter keywords to filter your search", required: true)
+#       search_result = Event.names.select{|e| e.include?(name_input)}
+#       results = $prompt.select("Results", search_result)
+#       Event.find_by(name: results).event_summary
+#       input = $prompt.select("Options", ["Make Booking", "Main Menu"])
 
-         if input == "Make Booking"
-      num = $prompt.ask("Quantity:")
-      puts "Congratulations! You have secured a booking of #{num} tickets!"
-      result_object = Event.find_by(name: results)
-      new_ticket = Booking.new(user_id: $current_user.id, event_id: result_object.id, number: num.to_i) 
-      mainmenu
-         else  
+#          if input == "Make Booking"
+#       num = $prompt.ask("Quantity:")
+#       puts "Congratulations! You have secured a booking of #{num} tickets!"
+#       result_object = Event.find_by(name: results)
+#       new_ticket = Booking.new(user_id: $current_user.id, event_id: result_object.id, number: num.to_i) 
+#       mainmenu
+#          else  
+#         mainmenu 
+#          end 
+   
+   when "Location"
+    cities = ["London", "Manchester", "Liverpool", "Edinburgh", "Oxford", "Brighton", "Birmingham", "Glasgow", "Cambridge", "Belfast", "Dublin", "Leeds", "Bath"].sort
+    #requests user to select a city  
+    location_input = $prompt.select("Select Location(s)", cities, filter: true)
+    #given selection, returns event data for that city
+    results = find_events_by_city(location_input)  #location object
+    #displays random 20 events for that city as a menu
+    choice = $prompt.select("Event(s) at this location", display_search_results(results), filter: true)
+    #displays more details about the selected event
+    event_data = event_summary(choice) #Broken - still needs fixing
+    input = $prompt.select("Options", ["Make Booking", "Main Menu"])
+    if input == "Make Booking"
+        num = $prompt.ask("Quantity:", required: true) #NEED TO ADD VALIDATION
+        #find the event data from the API
+        #create an Event Object using the data from the API
+        new_event = create_event_object(event_data)
+        #create a booking using the newly created event object and num of tickets input
+        new_ticket = Booking.new(user_id: $current_user.id, event_id: new_event.id, number: num.to_i) 
+        puts "Congratulations! You have secured a booking of #{num} tickets!"
+        mainmenu
+    else  
         mainmenu 
-         end 
+    end 
 
-   # when "Location"
-   #    location_input = $prompt.select("Select Location(s)", Location.cities, filter: true)
-   #    results = Location.find_by(city: location_input)  #location object
-   #    event_names = results.events.map{|event| event.name}
-   #    choice = $prompt.select("Event(s) at this location", event_names, filter: true)
-   #    Event.find_by(name: choice).event_summary
-   #    mainmenu
-
-   # when "Category"
-   #    category_input = $prompt.select("Select Categories", Category.names, filter: true)
-   #    results = Category.find_by(name: category_input)
-   #    event_names = results.events.map{|event| event.name}
-   #    choice = $prompt.select("Event(s) with this category", event_names, filter: true)
-   #    Event.find_by(name: choice).event_summary
-   #    mainmenu
-
+    when "Category"
+        category_selection = $prompt.select("Select Categories", get_categories, filter: true)
+        results = find_events_by_category(category_selection)
+        choice = $prompt.select("Event(s) with this category", display_search_results(results), filter: true)
+        event_data = event_summary(choice) #Broken - still needs fixing
+        input = $prompt.select("Options", ["Make Booking", "Main Menu"])
+    if input == "Make Booking"
+        num = $prompt.ask("Quantity:", required: true) #NEED TO ADD VALIDATION
+        #find the event data from the API
+        #create an Event Object using the data from the API
+        new_event = create_event_object(event_data)
+        #create a booking using the newly created event object and num of tickets input
+        new_ticket = Booking.new(user_id: $current_user.id, event_id: new_event.id, number: num.to_i) 
+        puts "Congratulations! You have secured a booking of #{num} tickets!"
+        mainmenu
+    else  
+        mainmenu 
+    end 
    end
 end
 
