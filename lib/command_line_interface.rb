@@ -27,13 +27,14 @@ def log_in_prompt #works
    [email, password]
 end 
 
-
 def log_in #works
   array = log_in_prompt
   user1 = User.find_by(email: array[0])
   if user1.email == array[0] && user1.password == array[1]
       $current_user = user1
+
       puts "\nHere we go!\n"
+
       selection = main_menu 
    else #works
        i= 0
@@ -41,7 +42,9 @@ def log_in #works
          puts "Invalid email and password. Please try again."
          array = log_in_prompt
          if user1.email == array[0] && user1.password == array[1]
+
              puts "\nHere we go!\n"
+
              selection = main_menu
          end
          i += 1
@@ -50,13 +53,16 @@ def log_in #works
 end 
 
 def mainmenu
+
    input = $prompt.select("What's next?", ["View Bookings", "Search For More Events", "Log Out", "End Session"])
+
    case input 
    when "View Bookings"
        $booking_summary = $current_user.booking_summary
         my_bookings_navigation($booking_summary)
         event_summary_navigation
    when "Search For More Events"
+
         search
    when "Log Out"
         signin_method
@@ -123,6 +129,7 @@ def search
         new_event = create_event_object(event_data)
         #create a booking using the newly created event object and num of tickets input
         new_ticket = Booking.new(user_id: $current_user.id, event_id: new_event.id, number: num.to_i) 
+
         puts "\nCongratulations! You have secured a booking of #{num} tickets!\n"
         mainmenu
     else  
@@ -163,6 +170,7 @@ def main_menu
     end
 end
 
+
 def my_bookings_navigation(booking_summary) #works
     selection = $prompt.select("You currently have #{$current_user.bookings.length} event ticket(s). Please click on a ticket to see more about that event.", booking_summary)
     # Given a selection from my_tickets_menu, return a summary of that event
@@ -199,12 +207,16 @@ def event_summary_navigation
             new_num = $prompt.ask("Updated Total Number of Tickets You Wish to Book for This Event: ") #works
             selected_event = Event.find_by(name: event_name)
             Booking.update(user_id: $current_user.id, event_id: selected_event.id, number: new_num)
+
             puts "\nUpdated!\n"
+
             main_menu
 
         when "Refund Bookings"
             Booking.where("user_id = ?", $current_user.id).destroy_all #check
+
             puts "\nYou have no bookings.\n" #works
+
             main_menu
         end 
 
