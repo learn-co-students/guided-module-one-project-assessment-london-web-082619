@@ -12,6 +12,12 @@
 
 ActiveRecord::Schema.define(version: 2019_09_09_095206) do
 
+  create_table "bookings", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "event_id"
+    t.integer "number"
+  end
+
   create_table "categories", force: :cascade do |t|
     t.string "name"
   end
@@ -27,12 +33,6 @@ ActiveRecord::Schema.define(version: 2019_09_09_095206) do
 
   create_table "locations", force: :cascade do |t|
     t.string "city"
-  end
-
-  create_table "tickets", force: :cascade do |t|
-    t.float "price"
-    t.integer "user_id"
-    t.integer "event_id"
   end
 
   create_table "users", force: :cascade do |t|
