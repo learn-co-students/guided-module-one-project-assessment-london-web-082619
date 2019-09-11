@@ -52,25 +52,6 @@ def log_in #works
    end
 end 
 
-def mainmenu
-
-   input = $prompt.select("What's next?", ["View Bookings", "Search For More Events", "Log Out", "End Session"])
-
-   case input 
-   when "View Bookings"
-       $booking_summary = $current_user.booking_summary
-        my_bookings_navigation($booking_summary)
-        event_summary_navigation
-   when "Search For More Events"
-
-        search
-   when "Log Out"
-        signin_method
-   when "End Session"
-        exit
-   end 
-end 
-
 def search
    searchmenu = $prompt.select("How would you like to refine your search?", ["Name", "Location", "Category"])
    case searchmenu 
@@ -87,9 +68,9 @@ def search
 #       puts "Congratulations! You have secured a booking of #{num} tickets!"
 #       result_object = Event.find_by(name: results)
 #       new_ticket = Booking.new(user_id: $current_user.id, event_id: result_object.id, number: num.to_i) 
-#       mainmenu
+#       main_menu
 #          else  
-#         mainmenu 
+#         main_menu 
 #          end 
    
    when "Location"
@@ -111,9 +92,9 @@ def search
         #create a booking using the newly created event object and num of tickets input
         new_ticket = Booking.new(user_id: $current_user.id, event_id: new_event.id, number: num.to_i) 
         puts "\nCongratulations! You have secured a booking of #{num} tickets!\n"
-        mainmenu
+        main_menu
     else  
-        mainmenu 
+        main_menu 
     end 
 
     when "Category"
@@ -131,9 +112,9 @@ def search
         new_ticket = Booking.new(user_id: $current_user.id, event_id: new_event.id, number: num.to_i) 
 
         puts "\nCongratulations! You have secured a booking of #{num} tickets!\n"
-        mainmenu
+        main_menu
     else  
-        mainmenu 
+        main_menu 
     end 
    end
 end

@@ -154,6 +154,7 @@ end
 
 #given a hash of event data from EventBrite, create an instance of event in ActiveRecord - WORKING
 def create_event_object(event_data)
+    binding.pry
     name = event_data["name"]["text"]
     description = event_data["description"]["text"]
     start_time = parse_datetime(event_data["start"])
