@@ -57,8 +57,7 @@ end
 
 #given a category name, get all events with that category ID - WORKING
 def find_events_by_category(category_name)
-    category_id = get_category_id(category_name)
-    response = get_api_response($category_search_url + category_id + "&expand=venue" + "&")["events"] #returns array of hashes where eash hash contains info for a specific events
+    get_api_response($category_search_url + get_category_id(category_name) + "&expand=venue" + "&")["events"] #returns array of hashes where eash hash contains info a specific events
 end
 
 #given an event id, get the event city - WORKING
@@ -117,6 +116,7 @@ def return_month_as_string(datetime)
     end
 end
 
+
 #given a date, returns a readable string - WORKING
 def display_date(datetime)
     "#{return_month_as_string(datetime)} #{datetime.day} #{datetime.year} - #{datetime.hour}:00"
@@ -125,10 +125,36 @@ end
 #returns an array of event search results (to be passed into TTY Prompt function)- WORKING
 def display_search_results(results)
     events = []
-    results.sample(20).each do |event|
-        date_formatted = display_date(parse_datetime(event["start"]))
-        category_id = event["category_id"]
-        events << "#{event["id"]}  |  #{date_formatted}  |  #{event["name"]["text"]}  |  #{event["venue"]["address"]["city"]}  |  #{category_name(category_id)}"
+    show = 0
+    if results.length > 20
+        show = 20
+    else
+        show = results.length
+    end
+    events_to_display = results.sample(show)
+    events_to_display.each do |event|
+        event_id = event["id"]
+        if date_formatted = display_date(parse_datetime(event["start"])) 
+            date_formatted
+        else
+            date_formatted = display_date(Time.now)
+        end
+        if event_name = event["name"]["text"]
+            event_name
+        else 
+            event_name = "Un-named"
+        end
+        if location = event["venue"]["address"]["city"]
+            location 
+        else
+            location = "Not specified"
+        end
+        if category = category_name(event["category_id"])
+            category
+        else
+            category = "Not specified"
+        end
+        events << "#{event_id}  |  #{date_formatted}  |  #{event_name}  |  #{location}  |  #{category}"
     end
     events
 end
@@ -154,7 +180,6 @@ end
 
 #given a hash of event data from EventBrite, create an instance of event in ActiveRecord - WORKING
 def create_event_object(event_data)
-    binding.pry
     name = event_data["name"]["text"]
     description = event_data["description"]["text"]
     start_time = parse_datetime(event_data["start"])

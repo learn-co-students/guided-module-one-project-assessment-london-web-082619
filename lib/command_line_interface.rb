@@ -78,11 +78,11 @@ def search
     #requests user to select a city  
     location_input = $prompt.select("Select Location(s)", cities, filter: true)
     #given selection, returns event data for that city
-    results = find_events_by_city(location_input)  #location object
+
     #displays random 20 events for that city as a menu
-    choice = $prompt.select("Event(s) at this location", display_search_results(results), filter: true)
+    choice = $prompt.select("Event(s) at this location", display_search_results(find_events_by_city(location_input)), filter: true)
     #displays more details about the selected event
-    event_data = event_summary(choice) #Broken - still needs fixing
+    event_data = event_summary(choice) 
     input = $prompt.select("Options", ["Make Booking", "Main Menu"])
     if input == "Make Booking"
         num = $prompt.ask("Quantity:", required: true) #NEED TO ADD VALIDATION
@@ -90,7 +90,7 @@ def search
         #create an Event Object using the data from the API
         new_event = create_event_object(event_data)
         #create a booking using the newly created event object and num of tickets input
-        new_ticket = Booking.new(user_id: $current_user.id, event_id: new_event.id, number: num.to_i) 
+        new_ticket = Booking.create(user_id: $current_user.id, event_id: new_event.id, number: num.to_i) 
         puts "\nCongratulations! You have secured a booking of #{num} tickets!\n"
         main_menu
     else  
@@ -99,8 +99,8 @@ def search
 
     when "Category"
         category_selection = $prompt.select("Select Categories", get_categories, filter: true)
-        results = find_events_by_category(category_selection)
-        choice = $prompt.select("Event(s) with this category", display_search_results(results), filter: true)
+        choice = $prompt.select("Event(s) with this category", display_search_results(find_events_by_category(category_selection)), filter: true)
+        
         event_data = event_summary(choice) #Broken - still needs fixing
         input = $prompt.select("Options", ["Make Booking", "Main Menu"])
     if input == "Make Booking"
@@ -109,9 +109,9 @@ def search
         #create an Event Object using the data from the API
         new_event = create_event_object(event_data)
         #create a booking using the newly created event object and num of tickets input
-        new_ticket = Booking.new(user_id: $current_user.id, event_id: new_event.id, number: num.to_i) 
+        new_ticket = Booking.create(user_id: $current_user.id, event_id: new_event.id, number: num.to_i) 
 
-        puts "\nCongratulations! You have secured a booking of #{num} tickets!\n"
+        puts "\nCongratulations! You have secured a booking of #{new_ticket.number} tickets!\n"
         main_menu
     else  
         main_menu 
@@ -138,11 +138,10 @@ def main_menu
     when "Search Events" #works
         search
     when "View My Bookings" #work
-        $booking_summary = $current_user.booking_summary #in array
-        if $book_summary.nil?
+        if $current_user.bookings.length == 0
             no_bookings
         else 
-            my_bookings_navigation($booking_summary)
+            my_bookings_navigation
         end 
     when "Log Out" #works
         signin_method
@@ -152,14 +151,13 @@ def main_menu
 end
 
 
-def my_bookings_navigation(booking_summary) #works
-    selection = $prompt.select("You currently have #{$current_user.bookings.length} event ticket(s). Please click on a ticket to see more about that event.", booking_summary)
+def my_bookings_navigation #works
+    selection = $prompt.select("You currently have #{$current_user.bookings.length} event booking(s). Please click on a ticket to see more about that event.", $current_user.booking_summary)
     # Given a selection from my_tickets_menu, return a summary of that event
     #Example selection (string): Opening Party - London
     event_name = selection.split(" - ")[0]
     event_city = selection.split(" - ")[1]
-    location_id = Location.find_by(city: event_city).id
-    event = Event.find_by(name: event_name, location_id: location_id)
+    event = Event.find_by(name: event_name, location: event_city)
     event.event_summary
     event_summary_navigation
 end
@@ -178,13 +176,13 @@ def event_summary_navigation
    #    #   my_bookings_menu(booking_summary)
 
    if selection == "Modify My Bookings"
-        input = $prompt.select("Which booking would you like to change?", $booking_summary) #works
+        input = $prompt.select("Which booking would you like to change?", booking_summary) #works
         action = $prompt.select("Actions: ", ["Change Quantity", "Refund Bookings"]) #works
 
         case action 
 
         when "Change Quantity"
-            event_name = $booking_summary.join.split(" - ")[0]
+            event_name = booking_summary.join.split(" - ")[0]
             new_num = $prompt.ask("Updated Total Number of Tickets You Wish to Book for This Event: ") #works
             selected_event = Event.find_by(name: event_name)
             Booking.update(user_id: $current_user.id, event_id: selected_event.id, number: new_num)
