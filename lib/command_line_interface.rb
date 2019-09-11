@@ -1,9 +1,9 @@
 $prompt = TTY::Prompt.new 
 
 def signin_method  #works
-   user_input = $prompt.select("Welcome to EventBkr. Please enter your details to proceed with your booking", ["Log in", "Register"])
+   user_input = $prompt.select("\nWelcome to EventBkr. Please enter your details to proceed with your booking", ["Log in", "Register"])
    if user_input == "Log in"
-   log_in 
+   log_in
 else 
    register 
    selection = main_menu 
@@ -14,17 +14,19 @@ end
 def register 
    first_name = $prompt.ask("First Name:", required: true)
    last_name = $prompt.ask("Last Name:", required: true)
-   email = $prompt.ask("Email:", required: true)
-   password = $prompt.mask("Password:", required: true)
-   user = User.create(first_name: first_name, last_name: last_name, email: email, password: password)
-   $current_user = user
+   email = $prompt.ask("Email:", required: true) {|q|
+        q.validate(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/, 'Invalid email address')}
+   password = $prompt.mask("Password:", required: true) {|q|
+        q.validate(/^\S{8,}$/, "Password must include at least 8 characters")}
+   user1 = User.create(first_name: first_name, last_name: last_name, email: email, password: password)
+   $current_user = user1
 end 
 
 def log_in_prompt #works
    email = $prompt.ask("Email:", required: true) {|q|
-        q.validate(/\A\w+@\w+\.\w+\Z/, 'Invalid email address')}
-   password = $prompt.mask("Password:", required: true)
-   [email, password]
+        q.validate(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/, 'Invalid email address')}
+   password = $prompt.mask("Password:", required: true) 
+   array = [email, password]
 end 
 
 def log_in #works
@@ -225,3 +227,4 @@ def event_summary_navigation
     end
 
 end
+
