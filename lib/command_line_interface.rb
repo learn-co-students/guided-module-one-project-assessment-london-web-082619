@@ -57,24 +57,6 @@ end
 def search
    searchmenu = $prompt.select("How would you like to refine your search?", ["Name", "Location", "Category"])
    case searchmenu 
-
-#    when "Name" #works
-#       name_input = $prompt.ask("Enter keywords to filter your search", required: true)
-#       search_result = Event.names.select{|e| e.include?(name_input)}
-#       results = $prompt.select("Results", search_result)
-#       Event.find_by(name: results).event_summary
-#       input = $prompt.select("Options", ["Make Booking", "Main Menu"])
-
-#          if input == "Make Booking"
-#       num = $prompt.ask("Quantity:")
-#       puts "Congratulations! You have secured a booking of #{num} tickets!"
-#       result_object = Event.find_by(name: results)
-#       new_ticket = Booking.new(user_id: $current_user.id, event_id: result_object.id, number: num.to_i) 
-#       main_menu
-#          else  
-#         main_menu 
-#          end 
-   
    when "Location"
     cities = ["London", "Manchester", "Liverpool", "Edinburgh", "Oxford", "Brighton", "Birmingham", "Glasgow", "Cambridge", "Belfast", "Dublin", "Leeds", "Bath"].sort
     #requests user to select a city  
@@ -170,33 +152,38 @@ end
 
 def event_summary_navigation
 
-    selection = event_summary_menu
+    selection1 = event_summary_menu
+   
 
    #  if selection == "View My Bookings"
    #    binding.pry
    #      booking_summary = $current_user.booking_summary #booking_summary gives an array
    #    #   my_bookings_menu(booking_summary)
 
-   if selection == "Modify My Bookings"
-        input = $prompt.select("Which booking would you like to change?", booking_summary) #works
-        action = $prompt.select("Actions: ", ["Change Quantity", "Refund Bookings"]) #works
+   if selection1 == "Modify My Bookings"
+        selection2 = $prompt.select("Which booking would you like to change?", $current_user.booking_summary) #works
+        action = $prompt.select("Actions: ", ["Change Quantity", "Refund Booking"]) #works
 
         case action 
 
         when "Change Quantity"
-            event_name = booking_summary.join.split(" - ")[0]
+            event_name = selection2.split(" - ")[0]
             new_num = $prompt.ask("Updated Total Number of Tickets You Wish to Book for This Event: ") #works
-            selected_event = Event.find_by(name: event_name)
-            Booking.update(user_id: $current_user.id, event_id: selected_event.id, number: new_num)
+            selected_event_id = Event.find_by(name: event_name).id
+            Booking.update(user_id: $current_user.id, event_id: selected_event_id, number: new_num.to_i)
 
             puts "\nUpdated!\n"
 
             main_menu
 
-        when "Refund Bookings"
-            Booking.where("user_id = ?", $current_user.id).destroy_all #check
+        when "Refund Booking"
+            binding.pry
+            event_name = selection2.split(" - ")[0]
+            selected_event_id = Event.find_by(name: event_name).id
+            booking = Booking.find_by(user_id: $current_user.id, event_id: selected_event_id)
+            booking.destroy
 
-            puts "\nYou have no bookings.\n" #works
+            puts "\nYou have deleted your booking for #{event_name}.\n" #works
 
             main_menu
         end 
