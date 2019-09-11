@@ -122,7 +122,8 @@ class EventBrite
     #returns an array of event search results (to be passed into TTY Prompt function)- WORKING
     def self.display_search_results(results)
         events = []
-        results.sample(10).each do |event|
+        event_results = results.sample(10)
+        event_results.each do |event|
             event_id = event["id"]
             
             if date_formatted = self.display_date(self.parse_date_time(event["start"])) 
@@ -136,9 +137,11 @@ class EventBrite
             else 
                 event_name = "Not specified"
             end
+#PICK UP HERE
+#/labs/MOD1/Project/guided-module-one-project-assessment-london-web-082619/lib/api_communicator.rb:141: Invalid char `\x08' in expression (SyntaxError)
 
-            if location = event["venue"]["address"]["city"]
-                location 
+            if location = event["venue"]["address"]["city"]
+                location
             else
                 location = "Not specified"
             end
