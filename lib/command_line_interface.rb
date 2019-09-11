@@ -75,6 +75,7 @@ def search
         new_event = create_event_object(event_data)
         #create a booking using the newly created event object and num of tickets input
         new_ticket = Booking.create(user_id: $current_user.id, event_id: new_event.id, number: num.to_i) 
+        $current_user = User.find_by(first_name: $current_user.first_name, last_name: $current_user.last_name, email: $current_user.email, password: $current_user.password)
         puts "\nCongratulations! You have secured a booking of #{num} tickets!\n"
         main_menu
     else  
@@ -84,8 +85,7 @@ def search
     when "Category"
         category_selection = $prompt.select("Select Categories", get_categories, filter: true)
         choice = $prompt.select("Event(s) with this category", display_search_results(find_events_by_category(category_selection)), filter: true)
-        
-        event_data = event_summary(choice) #Broken - still needs fixing
+        event_data = event_summary(choice)
         input = $prompt.select("Options", ["Make Booking", "Main Menu"])
     if input == "Make Booking"
         num = $prompt.ask("Quantity:", required: true) #NEED TO ADD VALIDATION
@@ -94,7 +94,7 @@ def search
         new_event = create_event_object(event_data)
         #create a booking using the newly created event object and num of tickets input
         new_ticket = Booking.create(user_id: $current_user.id, event_id: new_event.id, number: num.to_i) 
-
+        $current_user = User.find_by(first_name: $current_user.first_name, last_name: $current_user.last_name, email: $current_user.email, password: $current_user.password)
         puts "\nCongratulations! You have secured a booking of #{new_ticket.number} tickets!\n"
         main_menu
     else  
@@ -165,16 +165,15 @@ def event_summary_navigation
             new_num = $prompt.ask("Updated Total Number of Tickets You Wish to Book for This Event: ") #works
             booking = $current_user.bookings.find{ |booking| booking.id == booking_id }
             booking.update(number: new_num.to_i)
-
+            $current_user = User.find_by(first_name: $current_user.first_name, last_name: $current_user.last_name, email: $current_user.email, password: $current_user.password)
             puts "\nUpdated!\n"
 
             main_menu
 
         when "Refund Booking"
-            binding.pry
             booking_id = selection2.split(" - ")[0].to_i
-            Booking.find_by(id: booking_id).destroy
-
+            $current_user.bookings.find{ |booking| booking.id == booking_id }.destroy
+            $current_user = User.find_by(first_name: $current_user.first_name, last_name: $current_user.last_name, email: $current_user.email, password: $current_user.password)
             puts "\nYou have deleted your booking.\n" #works
 
             main_menu

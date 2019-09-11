@@ -8,6 +8,7 @@ require 'rest-client'
 require 'json'
 require 'pry'
 
+
 $token = "token=CXS22JWMRNKAGSTG6RXF"
 #if URL is one => /?
 #if URL is two => &

@@ -1,6 +1,10 @@
 
 require_relative '../lib/api_communicator.rb'
 
+User.destroy_all
+Event.destroy_all
+Booking.destroy_all
+
 u1 = User.create({first_name: "Elizabeth", last_name: "Prendergast", email: "elizabeth.prendergast@gmail.com", password: "123456"})
 u2 = User.create({first_name: "Michelle", last_name: "Van", email: "mjtvan@gmail.com", password: "12345"})
 u3 = User.create({first_name: "E", last_name: "P", email: "ep@gmail.com", password: "1"})
