@@ -132,6 +132,7 @@ def display_search_results(results)
     events
 end
   
+#FIX THIS
 # Example selection: "53667810867  |  September 13 2019 - 22:00  |  Suite Life Fridays Hosted by Big Tigger and Friends Friday at Suite Lounge  |  Atlanta  |  Music"
 #given the selection from the search results, finds the event info and displays it in a summary - WORKING
 def event_summary(selection)
@@ -143,10 +144,10 @@ def event_summary(selection)
     puts "Location: #{event_data["venue"]["address"]["city"]}"
     puts "Category: #{category_name(event_data["category_id"])}"
     puts "Description: #{event_data["description"]["text"]}"
+    event_data
 end
 
 #given a hash of event data from EventBrite, create an instance of event in ActiveRecord
-#NEED TO MOVE TO EVENT FOR THIS TO WORK!
 def create_event_object(event_data)
     name = event_data["name"]["text"]
     description = event_data["description"]["text"]
@@ -158,5 +159,7 @@ def create_event_object(event_data)
     new_event
 end
 
-binding.pry
-'save'
+#SEARCH BY NAME
+
+# binding.pry
+# 'save'
