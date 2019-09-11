@@ -39,33 +39,39 @@ class EventBrite
     
     #given a category_id, returns the category name
     def self.category_name(category_id)
-        category_data = self.all_categories.find{ |category| category["id"] == category_id } ? category_data["name"] : "Uncategorised"
+        if category_data = self.all_categories.find{ |category| category["id"] == category_id }
+            category_data["name"] 
+        else
+             "Uncategorised"
+        end
     end
     
     #given category name, return category ID number - WORKING
     def self.get_category_id(category_name)
-        category_id = self.all_categories.find{ |category| category["name"] == category_name }["id"] ? category_id : "Uncategorised"
+        if category_data = self.all_categories.find{ |category| category["name"] == category_name }
+            category_data["id"] 
+        else 
+            "Uncategorised"
+        end
     end
     
-    #given a category name, get all events with that category ID - WORKING
+    #given a category name, get all event data with that category ID - WORKING
     def self.find_events_by_category(category_name)
         self.get_api_response(@@search_by_category_url + self.get_category_id(category_name) + "&expand=venue" + "&")["events"] #returns array of hashes where eash hash contains info a specific events
     end
     
     #given an event id, get the event city - WORKING
-    def get_event_city(event_id)
-        url = "https://www.eventbriteapi.com/v3/events/" + event_id + "/?expand=venue"
-        return self.get_api_response(url + "&")
-    end
+    # def self.get_event_city(event_id)
+    #     self.get_api_response("https://www.eventbriteapi.com/v3/events/" + event_id + "/?expand=venue" + "&")
+    # end
     
     #given a city name (as a string), return all events in that city - WORKING
-    def find_events_by_city(city)
-        events = self.get_api_response(@@search_by_location_url + city + "&expand=venue" + "&")
-        return events["events"]
+    def self.find_events_by_city(city)
+        self.get_api_response(@@search_by_location_url + city + "&expand=venue" + "&")["events"]
     end
     
     #parses the fate format used in EventBrite API to format used in Active Record - WORKING
-    def parse_datetime(datetime_hash)
+    def self.parse_date_time(datetime_hash)
         datetime = datetime_hash["local"].split("-")
         year = datetime[0]
         month = datetime[1]
@@ -76,8 +82,8 @@ class EventBrite
         Time.new(year, month, day, hour, minute)
     end
     
-    #given a datetime formatted for ActiveRecord, returns the month name for a given month - WORKING
-    def return_month_as_string(datetime)
+    #given a datetime formatted for ActiveRecord, returns the name of the given month - WORKING
+    def self.return_month_as_string(datetime)
         case datetime.month
         when 1
             "January"
@@ -108,56 +114,55 @@ class EventBrite
         end
     end
     
-    
     #given a date, returns a readable string - WORKING
-    def display_date(datetime)
-        "#{return_month_as_string(datetime)} #{datetime.day} #{datetime.year} - #{datetime.hour}:00"
+    def self.display_date(datetime)
+        "#{self.return_month_as_string(datetime)} #{datetime.day} #{datetime.year} - #{datetime.hour}:00"
     end
     
     #returns an array of event search results (to be passed into TTY Prompt function)- WORKING
-    def display_search_results(results)
+    def self.display_search_results(results)
         events = []
-        show = 0
-        if results.length > 20
-            show = 20
-        else
-            show = results.length
-        end
-        events_to_display = results.sample(show)
-        events_to_display.each do |event|
+        results.sample(10).each do |event|
             event_id = event["id"]
-            if date_formatted = display_date(parse_datetime(event["start"])) 
+            
+            if date_formatted = self.display_date(self.parse_date_time(event["start"])) 
                 date_formatted
             else
-                date_formatted = display_date(Time.now)
+                date_formatted = self.display_date(Time.now)
             end
+
             if event_name = event["name"]["text"]
                 event_name
             else 
-                event_name = "Un-named"
+                event_name = "Not specified"
             end
+
             if location = event["venue"]["address"]["city"]
                 location 
             else
                 location = "Not specified"
             end
+
             if category = self.category_name(event["category_id"])
                 category
             else
                 category = "Not specified"
             end
+
             events << "#{event_id}  |  #{date_formatted}  |  #{event_name}  |  #{location}  |  #{category}"
+
         end
         events
     end
     
+    #Example selection : "51521901394  |  September 28 2019 - 10:00  |  2019 Sweet Auburn Music Fest  |  Atlanta  |  Music"
     #given the selection from the search results, finds the event info and displays it in a summary - WORKING
-    def event_summary(selection)
+    def self.event_summary(selection)
         event_id = selection.split("  |  ")[0]
         event_data = self.get_api_response("https://www.eventbriteapi.com/v3/events/" + event_id + "/?expand=venue" + "&")
         #print out event data
         puts "Event Name: #{event_data["name"]["text"]}"
-        puts "Date & Time: #{display_date(parse_datetime(event_data["start"]))}"
+        puts "Date & Time: #{self.display_date(self.parse_date_time(event_data["start"]))}"
         puts "Location: #{event_data["venue"]["address"]["city"]}"
         puts "Category: #{self.category_name(event_data["category_id"])}"
         puts "Description: #{event_data["description"]["text"]}"
@@ -165,22 +170,15 @@ class EventBrite
     end
     
     #given a hash of event data from EventBrite, create an instance of event in ActiveRecord - WORKING
-    def create_event_object(event_data)
+    def self.create_event_object(event_data)
         name = event_data["name"]["text"]
         description = event_data["description"]["text"]
-        start_time = parse_datetime(event_data["start"])
-        end_time = parse_datetime(event_data["end"])
+        start_time = self.parse_date_time(event_data["start"])
+        end_time = self.parse_date_time(event_data["end"])
         location = event_data["venue"]["address"]["city"]
         category = self.category_name(event_data["category_id"])
         new_event = Event.create(name: name, description: description, start_time: start_time, end_time: end_time, location: location, category: category)
         new_event
     end
     
-    #SEARCH BY NAME
-    
-    binding.pry
-    'save'
-    
-
-
 end

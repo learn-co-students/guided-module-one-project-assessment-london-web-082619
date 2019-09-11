@@ -9,8 +9,6 @@ else
    selection = main_menu 
 end 
 
-end 
-
 def register 
    first_name = $prompt.ask("First Name:", required: true)
    last_name = $prompt.ask("Last Name:", required: true)
@@ -83,7 +81,7 @@ def search
     end 
 
     when "Category"
-        category_selection = $prompt.select("Select Categories", get_categories, filter: true)
+        category_selection = $prompt.select("Select Categories", EventBrite.get_categories, filter: true)
         choice = $prompt.select("Event(s) with this category", display_search_results(find_events_by_category(category_selection)), filter: true)
         event_data = event_summary(choice)
         input = $prompt.select("Options", ["Make Booking", "Main Menu"])
